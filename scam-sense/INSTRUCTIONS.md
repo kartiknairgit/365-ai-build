@@ -60,3 +60,5 @@ The v0.1 MVP should focus on a rule-based message analysis flow:
 - Kept the setup limited to planning and documentation with no application code.
 - Added GitHub project planning doc.
 - Defined milestones, labels, Kanban columns, and initial issue backlog.
+- Added safety policy.
+- Defined language constraints, privacy expectations, and user-protection rules.
