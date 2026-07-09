@@ -45,6 +45,10 @@ Prepare a public-facing demo with deployment, documentation, privacy expectation
 - Review: implementation or documentation is ready for review.
 - Done: accepted and complete.
 
+## Execution Workflow
+
+ScamSense work should move through an issue to branch to PR to merge workflow. Each meaningful task should start from a scoped GitHub issue, be completed on a focused branch, be reviewed through a PR linked with `Closes #issue-number`, and then be merged back to `main` before the next task begins.
+
 ## Initial Issue Backlog
 
 ### Define scam signal taxonomy
