@@ -62,3 +62,5 @@ The v0.1 MVP should focus on a rule-based message analysis flow:
 - Defined milestones, labels, Kanban columns, and initial issue backlog.
 - Added safety policy.
 - Defined language constraints, privacy expectations, and user-protection rules.
+- Added v0.1 architecture notes.
+- Defined planned modules, data flow, output schema, and testing strategy.
