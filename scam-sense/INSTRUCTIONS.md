@@ -66,3 +66,5 @@ The v0.1 MVP should focus on a rule-based message analysis flow:
 - Defined planned modules, data flow, output schema, and testing strategy.
 - Added GitHub issue templates for feature, bug, and research tasks.
 - Prepared repository for structured Kanban workflow.
+- Started Issue #1: Define scam signal taxonomy.
+- Added initial signal taxonomy documentation.
