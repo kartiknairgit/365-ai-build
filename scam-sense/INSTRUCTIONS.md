@@ -51,6 +51,36 @@ The v0.1 MVP should focus on a rule-based message analysis flow:
 - No production deployment
 - No claim that ScamSense can prove whether a message is fraudulent
 
+## Standard GitHub Workflow
+
+Every meaningful ScamSense task should follow this workflow:
+
+1. Sync `main`.
+2. Confirm or create a GitHub issue before starting work.
+3. Create a focused branch from `main`.
+4. Make a small, meaningful change.
+5. Update progress documentation, especially the `INSTRUCTIONS.md` build log.
+6. If new scope is discovered, create a new GitHub issue instead of silently expanding the current task.
+7. Keep GitHub milestones accurate.
+8. Push the branch.
+9. Open a PR linked to the issue using `Closes #issue-number`.
+10. Review the diff.
+11. Merge the PR.
+12. Delete the branch.
+13. Pull `main` again before starting the next task.
+
+## Codex Operating Rules
+
+- Codex must keep work inside `scam-sense/` unless explicitly instructed otherwise.
+- Codex must not commit unless explicitly asked.
+- Codex must show changed files and a summary after each task.
+- Codex must not implement beyond the active issue scope.
+- Codex must update the build log when meaningful progress is made.
+- Codex must suggest a new issue when it finds new scope.
+- Codex must avoid fake or busywork commits.
+- Commits should be meaningful and tied to real progress.
+- Daily goal is at least 10 meaningful commits, not spam commits.
+
 ## Build Log
 
 ### 2026-07-09
@@ -68,3 +98,5 @@ The v0.1 MVP should focus on a rule-based message analysis flow:
 - Prepared repository for structured Kanban workflow.
 - Started Issue #1: Define scam signal taxonomy.
 - Added initial signal taxonomy documentation.
+- Merged the first issue-driven PR for the signal taxonomy.
+- Added standard GitHub workflow instructions for future ScamSense work.
