@@ -100,3 +100,5 @@ Every meaningful ScamSense task should follow this workflow:
 - Added initial signal taxonomy documentation.
 - Merged the first issue-driven PR for the signal taxonomy.
 - Added standard GitHub workflow instructions for future ScamSense work.
+- Started Issue #2: Design risk scoring model.
+- Added initial risk scoring model documentation.
