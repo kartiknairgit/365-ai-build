@@ -27,9 +27,12 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: scam-sense/requirements-dev.txt
+          cache-dependency-path: |
+            scam-sense/requirements.txt
+            scam-sense/requirements-dev.txt
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -r requirements-dev.txt
       - run: ruff format --check .
       - run: ruff check .
       - run: pytest
+      - run: python scripts/smoke_streamlit.py
