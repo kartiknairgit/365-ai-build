@@ -1,6 +1,6 @@
 # Architecture
 
-This document describes the planned v0.1 architecture for ScamSense as a rule-based scam-risk checker. It is planning guidance only and does not represent implemented application code.
+This document describes the v0.1 architecture implemented for ScamSense as a rule-based scam-risk checker.
 
 ## 1. System Overview
 
@@ -17,7 +17,7 @@ The v0.1 architecture should prioritize:
 
 ## 2. Planned Module Structure
 
-The planned source modules can be organized around the analysis pipeline:
+The source modules are organized around the analysis pipeline:
 
 ```text
 src/scamsense/
@@ -26,11 +26,11 @@ src/scamsense/
   signal_detector.py
   category_classifier.py
   risk_scorer.py
-  guidance_generator.py
-  result_formatter.py
+  guidance.py
+  analysis.py
 ```
 
-This structure is provisional. It should be implemented only when the project moves from planning into v0.1 development.
+`app.py` consumes only the composed `analyse_message` contract; detection, classification, scoring and guidance remain independently testable.
 
 ## 3. Data Flow
 
