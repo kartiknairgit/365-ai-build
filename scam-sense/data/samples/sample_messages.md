@@ -67,3 +67,43 @@ Potential risk signals:
 - Urgent emotional pressure
 - Request not to call
 - Immediate money transfer request
+
+## Rental Deposit Scam
+
+> The apartment is available, but I am overseas. Send the bond today before viewing to reserve the property.
+
+Potential risk signals:
+
+- Deposit requested before viewing
+- Overseas-owner explanation
+- Urgent reservation pressure
+- Rental context
+
+## Fake Tax Refund
+
+> ATO tax refund pending. Enter your bank details at `https://mygov-refund-example.test` immediately to receive it.
+
+Potential risk signals:
+
+- Government impersonation context
+- Bank-detail request
+- Suspicious fictional link
+- Urgency pressure
+
+## Lower-Risk Routine Reminder
+
+> Reminder: your appointment is tomorrow at 3 pm. Please open the provider's usual app if you need to make a change.
+
+Expected behaviour:
+
+- No obvious scam-risk indicators detected
+- Still encourages use of a known official channel
+
+## Ambiguous Account Note
+
+> Please check your account when you have a moment.
+
+Expected behaviour:
+
+- Limited context and low confidence
+- No link, payment, urgency, credential, or identity request
