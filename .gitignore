@@ -26,3 +26,10 @@ TestResults.xml
 node_modules/
 dist/
 coverage/
+
+# Python caches and local environments
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/

@@ -83,6 +83,12 @@ Every meaningful ScamSense task should follow this workflow:
 
 ## Build Log
 
+### 2026-07-23
+
+- Implemented the typed, deterministic signal detector, category classifier, and documented 0–100 risk scoring model.
+- Expanded the fictional fixture library with rental, tax/government, lower-risk, and ambiguous examples.
+- Added threshold, detector, category, regression, and safety-language tests plus isolated ScamSense CI.
+
 ### 2026-07-09
 
 - Created the initial `scam-sense/` subproject structure.

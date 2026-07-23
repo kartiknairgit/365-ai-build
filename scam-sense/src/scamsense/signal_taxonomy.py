@@ -1,0 +1,177 @@
+"""Auditable v0.1 signal definitions derived from the project taxonomy."""
+
+from scamsense.models import Severity, SignalDefinition
+
+SIGNAL_DEFINITIONS: tuple[SignalDefinition, ...] = (
+    SignalDefinition(
+        "suspicious_link",
+        "Suspicious link",
+        Severity.HIGH,
+        "The message includes a link alongside a request or unexpected action.",
+        "Links in unexpected messages can lead to imitation login or payment pages.",
+        (r"https?://[^\s`]+", r"\bwww\.[^\s`]+", r"\b[a-z0-9-]+\.(?:com|net|org|test)/\S+"),
+    ),
+    SignalDefinition(
+        "shortened_url",
+        "Shortened or obscured link",
+        Severity.MEDIUM,
+        "The link may hide its final destination.",
+        "A hidden destination is harder to compare with an organisation's official site.",
+        (r"\b(?:bit\.ly|tinyurl\.com|t\.co|short-link|tiny-example|go-example)\b",),
+    ),
+    SignalDefinition(
+        "urgency",
+        "Urgency pressure",
+        Severity.MEDIUM,
+        "The sender pressures the reader to act quickly.",
+        "Urgency can discourage independent checks before clicking, sharing or paying.",
+        (
+            r"\b(?:urgent|immediately|right now|act now|final warning|last chance|today only)\b",
+            r"\bwithin \d+ (?:minutes?|hours?)\b",
+            r"\b(?:will be|be) (?:locked|suspended|returned|cancelled)\b",
+        ),
+    ),
+    SignalDefinition(
+        "payment_pressure",
+        "Payment pressure",
+        Severity.HIGH,
+        "The message asks for money, a fee, deposit or transfer.",
+        "Unexpected payment requests should be verified before money is sent.",
+        (
+            r"\b(?:pay|send|transfer|deposit|fee|payment|bond)\b.{0,45}\b(?:\$?\d+|money|funds?|today|now|first)\b",
+            r"\b(?:\$?\d+|money|funds?|fee|deposit|bond)\b.{0,45}\b(?:pay|send|transfer|deposit)\b",
+        ),
+    ),
+    SignalDefinition(
+        "gift_cards",
+        "Gift card or voucher request",
+        Severity.CRITICAL,
+        "The sender asks for gift cards, vouchers or their codes.",
+        "These payments are difficult to reverse and card codes can be redeemed immediately.",
+        (r"\b(?:gift cards?|prepaid cards?|voucher codes?|scratch codes?)\b",),
+    ),
+    SignalDefinition(
+        "crypto",
+        "Cryptocurrency or wallet request",
+        Severity.CRITICAL,
+        "The message asks about cryptocurrency, wallet access or secret wallet details.",
+        "Crypto transfers may be irreversible and secret wallet details control the funds.",
+        (r"\b(?:crypto(?:currency)?|bitcoin|wallet|seed phrase|private key)\b",),
+    ),
+    SignalDefinition(
+        "wire_transfer",
+        "Unusual transfer request",
+        Severity.HIGH,
+        "The sender requests a bank, wire or instant transfer.",
+        "Transfers to an unexpected or new recipient can be difficult to recover.",
+        (r"\b(?:wire transfer|bank transfer|instant transfer|new payee|new account)\b",),
+    ),
+    SignalDefinition(
+        "credentials",
+        "Password or verification-code request",
+        Severity.CRITICAL,
+        "The message asks for a password, one-time code or recovery code.",
+        "Sharing authentication details can give another person access to an account.",
+        (
+            r"\b(?:send|share|reply with|tell me|confirm|enter)\b.{0,35}\b(?:password|otp|one-time (?:code|passcode)|verification code|login code|recovery code)\b",
+            r"\b(?:password|otp|one-time (?:code|passcode)|verification code|login code|recovery code)\b.{0,35}\b(?:send|share|reply|confirm|enter)\b",
+        ),
+    ),
+    SignalDefinition(
+        "bank_details",
+        "Bank or card detail request",
+        Severity.CRITICAL,
+        "The message asks for banking or card details.",
+        "These details can enable unauthorised transactions or account access.",
+        (
+            r"\b(?:send|share|reply with|confirm|enter|upload)\b.{0,40}\b(?:card number|cvv|pin|account number|bank login|bank details)\b",
+            r"\b(?:card number|cvv|pin|account number|bank login|bank details)\b.{0,40}\b(?:send|share|reply|confirm|enter|upload)\b",
+        ),
+    ),
+    SignalDefinition(
+        "identity_documents",
+        "Identity document request",
+        Severity.CRITICAL,
+        "The sender asks for identity documents or an identifying photo.",
+        "Identity documents can be misused for identity theft or account applications.",
+        (
+            r"\b(?:send|share|upload|photo of)\b.{0,35}\b(?:passport|driver'?s licence|identity document|proof of address|selfie.{0,10}\bid)\b",
+        ),
+    ),
+    SignalDefinition(
+        "institution_impersonation",
+        "Trusted organisation impersonation",
+        Severity.HIGH,
+        "The message claims an urgent bank, government, tax or delivery context.",
+        "A familiar organisation name can be used to create trust before a risky request.",
+        (
+            r"\b(?:bank|government|tax office|ato|delivery service|postal service|parcel)\b.{0,55}\b(?:locked|suspended|refund|verification|on hold|returned|confirm)\b",
+            r"\b(?:account|refund|parcel|delivery)\b.{0,45}\b(?:locked|suspended|pending|on hold|returned)\b",
+        ),
+    ),
+    SignalDefinition(
+        "marketplace_manipulation",
+        "Marketplace payment manipulation",
+        Severity.HIGH,
+        "The message proposes an unusual courier, insurance or off-platform process.",
+        "Moving outside normal marketplace protections can expose a buyer or seller to loss.",
+        (
+            r"\b(?:courier|pickup)\b.{0,60}\b(?:insurance|fee|payment|pay)\b",
+            r"\b(?:outside|leave|off)[ -]?(?:the )?(?:marketplace|platform)\b",
+            r"\brefundable insurance\b",
+        ),
+    ),
+    SignalDefinition(
+        "fake_job",
+        "Unusual job offer",
+        Severity.HIGH,
+        "The job offer uses unusual hiring, pay or purchase instructions.",
+        "Upfront purchases and no-interview offers are common ways to obtain money or details.",
+        (
+            r"\b(?:job|role|position|payroll)\b.{0,70}\b(?:no interview|gift card|equipment|upfront|activate)\b",
+            r"\b(?:no interview|selected immediately)\b.{0,50}\b(?:job|role|position|paying)\b",
+            r"\b\$\d{2,}(?:\.\d+)? per hour\b",
+        ),
+    ),
+    SignalDefinition(
+        "rental",
+        "Risky rental request",
+        Severity.HIGH,
+        "The rental message asks for money or identity details before normal checks.",
+        "Paying before a viewing or verification can lead to financial or identity loss.",
+        (
+            r"\b(?:rent|rental|apartment|property|lease)\b.{0,70}\b(?:bond|deposit|before viewing|overseas|upload.{0,15}\bid)\b",
+            r"\b(?:bond|deposit)\b.{0,50}\b(?:before|reserve)\b.{0,30}\b(?:viewing|apartment|property)\b",
+        ),
+    ),
+    SignalDefinition(
+        "family_emergency",
+        "Family emergency manipulation",
+        Severity.CRITICAL,
+        "The sender claims a family emergency and discourages normal verification.",
+        "Emotional pressure and a new number can make an urgent money request harder to question.",
+        (
+            r"\b(?:mum|mom|dad|son|daughter|family)\b.{0,80}\b(?:new number|temporary number|in trouble|emergency|do not call|don't call)\b",
+            r"\b(?:new number|temporary number)\b.{0,80}\b(?:send|transfer|money|do not call|don't call)\b",
+        ),
+    ),
+    SignalDefinition(
+        "investment_claim",
+        "Unrealistic investment claim",
+        Severity.HIGH,
+        "The message promises guaranteed, unusually fast or risk-free returns.",
+        "Legitimate investments cannot guarantee large, fast profits without risk.",
+        (
+            r"\b(?:guaranteed (?:daily )?(?:crypto )?(?:returns?|profits?)|no risk|double your money|\d+x return)\b",
+            r"\bturn \$?\d+ into \$?\d+\b",
+        ),
+    ),
+    SignalDefinition(
+        "secrecy",
+        "Secrecy or isolation pressure",
+        Severity.MEDIUM,
+        "The sender asks the reader not to contact or tell someone else.",
+        "Secrecy can prevent a trusted person or organisation from checking the request.",
+        (r"\b(?:do not|don't) (?:call|tell|contact|speak to)\b", r"\bkeep (?:this|it) secret\b"),
+    ),
+)
