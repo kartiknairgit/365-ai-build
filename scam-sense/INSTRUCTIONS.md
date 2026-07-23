@@ -4,9 +4,7 @@ This document is the living build log and internal planning record for the ScamS
 
 ## Current Status
 
-Project setup and planning only.
-
-The repository currently contains documentation, planning notes, placeholder source and test directories, and fictional sample messages. There is no application implementation, Streamlit interface, model integration, or external API call in this stage.
+The v0.1 deterministic rule engine, Streamlit experience, tests, deployment configuration and release documentation are implemented. ScamSense remains a lightweight educational prototype with no external analysis API, authentication, database or message history.
 
 ## Vision
 
@@ -41,14 +39,13 @@ The v0.1 MVP should focus on a rule-based message analysis flow:
 
 ## Non-Goals for v0.1
 
-- No Streamlit app yet
 - No external API calls
 - No AI-generated analysis
 - No link fetching or URL reputation lookup
 - No user accounts
 - No message storage
 - No browser extension
-- No production deployment
+- No live public deployment is created by the repository alone
 - No claim that ScamSense can prove whether a message is fraudulent
 
 ## Standard GitHub Workflow
@@ -90,6 +87,7 @@ Every meaningful ScamSense task should follow this workflow:
 - Added threshold, detector, category, regression, and safety-language tests plus isolated ScamSense CI.
 - Added the Streamlit input and result experience with fictional examples, clear/reset controls, accessible text-labelled risk presentation, parent-friendly explanations, and empty/lower-risk/high-risk states.
 - Added cautious Australian guidance using verified Scamwatch and cyber.gov.au reporting and recovery sources.
+- Added pinned Streamlit deployment dependencies, a clean-environment startup check, deployment documentation, and a portfolio-ready README with an illustrative generated preview.
 
 ### 2026-07-09
 

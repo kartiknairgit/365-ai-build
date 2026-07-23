@@ -2,7 +2,13 @@
 
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 import streamlit as st
+
+# Community Cloud launches subdirectory entrypoints from the repository root.
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 from scamsense.analysis import analyse_message
 from scamsense.guidance import CYBER_RECOVERY_URL, SCAMWATCH_REPORT_URL
