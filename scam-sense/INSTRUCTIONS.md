@@ -88,6 +88,8 @@ Every meaningful ScamSense task should follow this workflow:
 - Implemented the typed, deterministic signal detector, category classifier, and documented 0–100 risk scoring model.
 - Expanded the fictional fixture library with rental, tax/government, lower-risk, and ambiguous examples.
 - Added threshold, detector, category, regression, and safety-language tests plus isolated ScamSense CI.
+- Added the Streamlit input and result experience with fictional examples, clear/reset controls, accessible text-labelled risk presentation, parent-friendly explanations, and empty/lower-risk/high-risk states.
+- Added cautious Australian guidance using verified Scamwatch and cyber.gov.au reporting and recovery sources.
 
 ### 2026-07-09
 
