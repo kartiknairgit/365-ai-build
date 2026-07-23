@@ -71,3 +71,15 @@ class RiskResult:
     level: RiskLevel
     base_score: int
     adjustments: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class AnalysisResult:
+    risk: RiskResult
+    category: CategoryResult
+    detected_signals: tuple[DetectedSignal, ...]
+    explanation: str
+    unsafe_actions: tuple[str, ...]
+    safest_next_step: str
+    parent_friendly_explanation: str
+    disclaimer: str
