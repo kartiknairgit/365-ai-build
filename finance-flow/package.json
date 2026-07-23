@@ -1,0 +1,22 @@
+{
+  "name": "finance-flow",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
+    "check": "npm run format && npm run lint && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4"
+  }
+}

@@ -21,3 +21,8 @@ rad.json
 *.flf
 #Test results file
 TestResults.xml
+
+# JavaScript build output
+node_modules/
+dist/
+coverage/

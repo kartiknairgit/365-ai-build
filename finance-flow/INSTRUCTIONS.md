@@ -62,3 +62,8 @@ All Finance Flow issue titles start with `[Finance Flow]`, use the `project:fina
 - Inspected and synced the existing repository and confirmed Finance Flow has no prior tracked implementation.
 - Defined the mission, v1.0 boundaries, architecture, and 20-issue delivery plan.
 - Added the isolated project documentation and root repository index entry.
+- Implemented the TypeScript web application, typed domain model, finance calculations, validation, versioned local persistence, and fictional demo state.
+- Added responsive dashboard, transaction management, search and filters, category breakdowns, savings goals, weekly guidance, backup and reset controls, onboarding, and accessible interaction states.
+- Added automated domain and persistence tests plus production build checks.
+- Completed transaction editing, recurring-month projection, configurable planning buffers, goal remaining balances, and stricter import validation with legacy-state migration.
+- Added formatting and type-check scripts, pull-request CI with a deployable static artifact, and release, privacy, and deployment guidance.
