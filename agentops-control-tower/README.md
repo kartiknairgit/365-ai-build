@@ -38,3 +38,14 @@ docker compose config
 ```
 
 See [INSTRUCTIONS.md](INSTRUCTIONS.md) for architecture and durable conventions.
+
+## API overview
+
+- `POST /api/v1/imports` imports a bounded `.jsonl`/`.ndjson` file.
+- `GET /api/v1/runs` lists and filters reconstructed runs with pagination.
+- `GET /api/v1/runs/{run_id}` returns safe event details and evaluation evidence.
+- `GET /api/v1/metrics` returns deterministic operational metrics.
+- `GET /api/v1/agents` returns operational, non-intelligence agent scorecards.
+- `GET /api/v1/comparisons` compares baseline and candidate runs.
+
+Interactive OpenAPI documentation is available at `http://localhost:8000/docs`.

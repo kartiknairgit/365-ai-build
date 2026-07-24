@@ -77,7 +77,7 @@ jobs:
         working-directory: agentops-control-tower/backend
         run: |
           python -m pip install -e '.[dev]'
-          pytest tests/test_fixtures.py tests/test_persistence.py
+          pytest tests/test_fixtures.py tests/test_persistence.py tests/test_api.py tests/test_metrics_evaluation.py
       - name: Validate Compose configuration
         working-directory: agentops-control-tower
         run: docker compose config --quiet
