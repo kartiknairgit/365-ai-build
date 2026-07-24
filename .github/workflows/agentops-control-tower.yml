@@ -1,0 +1,83 @@
+name: AgentOps Control Tower
+
+on:
+  pull_request:
+    paths:
+      - "agentops-control-tower/**"
+      - ".github/workflows/agentops-control-tower.yml"
+      - "README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - "agentops-control-tower/**"
+      - ".github/workflows/agentops-control-tower.yml"
+      - "README.md"
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agentops-control-tower/backend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: agentops-control-tower/backend/pyproject.toml
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[dev]'
+      - run: ruff format --check .
+      - run: ruff check .
+      - run: pytest
+      - run: python -c "from agentops.main import app; assert app.title"
+      - name: Verify backend startup and health
+        run: |
+          uvicorn agentops.main:app --host 127.0.0.1 --port 8000 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          for attempt in 1 2 3 4 5; do
+            curl --fail --silent http://127.0.0.1:8000/health && exit 0
+            sleep 1
+          done
+          exit 1
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agentops-control-tower/frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: agentops-control-tower/frontend/package-lock.json
+      - run: npm ci
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test -- --run
+      - run: npm run build
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Validate fixture ingestion and reconstruction
+        working-directory: agentops-control-tower/backend
+        run: |
+          python -m pip install -e '.[dev]'
+          pytest tests/test_fixtures.py tests/test_persistence.py
+      - name: Validate Compose configuration
+        working-directory: agentops-control-tower
+        run: docker compose config --quiet
