@@ -47,5 +47,14 @@ See [INSTRUCTIONS.md](INSTRUCTIONS.md) for architecture and durable conventions.
 - `GET /api/v1/metrics` returns deterministic operational metrics.
 - `GET /api/v1/agents` returns operational, non-intelligence agent scorecards.
 - `GET /api/v1/comparisons` compares baseline and candidate runs.
+- `GET /api/v1/runs/{run_id}/export.jsonl` exports validated trace events.
+- `GET /api/v1/runs/{run_id}/evaluation.csv` and `/audit.md` export audit evidence.
+- `POST /api/v1/demo/fixtures/{name}` loads a fixed fictional sample.
+- `POST /api/v1/demo/reset` requires the exact phrase `RESET LOCAL DEMO DATA`.
 
 Interactive OpenAPI documentation is available at `http://localhost:8000/docs`.
+
+Architecture and security details live in [docs/architecture.md](docs/architecture.md)
+and [docs/privacy-threat-model.md](docs/privacy-threat-model.md). Screenshots are not
+checked in for this local-only prototype; run the application for the live,
+responsive control plane.
