@@ -64,3 +64,30 @@ def test_comparison_endpoint(tmp_path: Path) -> None:
     )
     assert response.status_code == 200
     assert response.json()["completion"]["classification"] == "improvement"
+
+
+def test_exports_and_confirmed_reset(tmp_path: Path) -> None:
+    api = client(tmp_path)
+    import_fixture(api, "failed-incomplete.jsonl")
+    run_id = "report-failed-incomplete"
+    assert api.get(f"/api/v1/runs/{run_id}/export.jsonl").text.count("\n") == 4
+    assert (
+        "unexpected_workflow_termination" in api.get(f"/api/v1/runs/{run_id}/evaluation.csv").text
+    )
+    assert "human interpretation" in api.get(f"/api/v1/runs/{run_id}/audit.md").text
+    rejected = api.post("/api/v1/demo/reset", json={"confirmation": "reset"})
+    assert rejected.status_code == 400
+    accepted = api.post(
+        "/api/v1/demo/reset",
+        json={"confirmation": "RESET LOCAL DEMO DATA"},
+    )
+    assert accepted.status_code == 200
+    assert api.get("/api/v1/runs").json()["total"] == 0
+
+
+def test_fixed_demo_fixture_loading(tmp_path: Path) -> None:
+    api = client(tmp_path)
+    loaded = api.post("/api/v1/demo/fixtures/successful-research.jsonl")
+    assert loaded.status_code == 201
+    assert loaded.json()["valid_count"] == 7
+    assert api.post("/api/v1/demo/fixtures/../../secret").status_code == 404

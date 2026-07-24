@@ -1,6 +1,6 @@
 import hashlib
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
 from agentops.ingestion.jsonl import IngestionResult
 from agentops.persistence.database import Database
@@ -93,3 +93,9 @@ class TraceRepository:
             }
             for item in records
         ]
+
+    def reset(self) -> None:
+        with self.database.sessions.begin() as session:
+            session.execute(delete(QuarantineRecord))
+            session.execute(delete(EventRecord))
+            session.execute(delete(ImportBatch))
