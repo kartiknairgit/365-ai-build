@@ -1,0 +1,18 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - agentops-data:/data
+    environment:
+      AGENTOPS_DATABASE_URL: sqlite:////data/agentops.db
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  agentops-data:
