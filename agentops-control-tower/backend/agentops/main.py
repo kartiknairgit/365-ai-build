@@ -47,6 +47,15 @@ def create_app(database_url: str | None = None) -> FastAPI:
             content={"error": {"code": "invalid_request", "message": str(exc)}},
         )
 
+    @app.exception_handler(HTTPException)
+    async def http_error_handler(_request, exc: HTTPException) -> JSONResponse:
+        content = (
+            exc.detail
+            if isinstance(exc.detail, dict) and "error" in exc.detail
+            else {"error": {"code": "http_error", "message": str(exc.detail)}}
+        )
+        return JSONResponse(status_code=exc.status_code, content=content)
+
     @app.get("/health", tags=["system"])
     def health() -> dict[str, str]:
         return {"status": "healthy", "service": "agentops-control-tower"}

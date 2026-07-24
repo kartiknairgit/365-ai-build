@@ -46,7 +46,9 @@ def test_quarantine_repeat_safe_import_and_errors(tmp_path: Path) -> None:
     assert first["invalid_count"] == 2
     assert len(first["quarantine"]) == 2
     assert second["created"] is False
-    assert api.get("/api/v1/runs/absent").status_code == 404
+    missing = api.get("/api/v1/runs/absent")
+    assert missing.status_code == 404
+    assert missing.json() == {"error": {"code": "not_found", "message": "Run not found"}}
 
 
 def test_comparison_endpoint(tmp_path: Path) -> None:
