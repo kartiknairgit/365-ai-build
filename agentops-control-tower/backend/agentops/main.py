@@ -1,9 +1,14 @@
+import csv
+import io
+import json
 import os
+from pathlib import Path
 from typing import Annotated
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse, Response
+from pydantic import BaseModel
 
 from agentops.domain import TraceEvent
 from agentops.evaluation import compare_runs, evaluate_run
@@ -19,6 +24,19 @@ ALLOWED_CONTENT_TYPES = {
     "application/octet-stream",
     "text/plain",
 }
+FIXTURE_NAMES = {
+    "successful-research.jsonl",
+    "degraded-retry-and-quarantine.jsonl",
+    "failed-incomplete.jsonl",
+}
+
+
+class ResetRequest(BaseModel):
+    confirmation: str
+
+
+def csv_safe(value: str) -> str:
+    return f"'{value}" if value.startswith(("=", "+", "-", "@", "\t", "\r")) else value
 
 
 def create_app(database_url: str | None = None) -> FastAPI:
@@ -99,6 +117,26 @@ def create_app(database_url: str | None = None) -> FastAPI:
             "quarantine": repository.list_quarantine(batch_id),
         }
 
+    @app.post("/api/v1/demo/fixtures/{fixture_name}", status_code=201, tags=["imports"])
+    def load_fixture(fixture_name: str) -> dict:
+        if fixture_name not in FIXTURE_NAMES:
+            raise HTTPException(
+                status_code=404,
+                detail={"error": {"code": "not_found", "message": "Fixture not found"}},
+            )
+        fixture = Path(__file__).parents[2] / "fixtures" / fixture_name
+        content = fixture.read_bytes()
+        result = ingest_bytes(content, filename=fixture_name)
+        batch_id, created = repository.save_import(
+            source_name=fixture_name, content=content, result=result
+        )
+        return {
+            "import_id": batch_id,
+            "created": created,
+            "valid_count": result.valid_count,
+            "invalid_count": result.invalid_count,
+        }
+
     @app.get("/api/v1/runs", tags=["runs"])
     def list_runs(
         page: int = Query(default=1, ge=1),
@@ -155,6 +193,74 @@ def create_app(database_url: str | None = None) -> FastAPI:
     @app.get("/api/v1/comparisons", tags=["evaluation"])
     def comparison(baseline_run_id: str, candidate_run_id: str) -> dict:
         return compare_runs(find_run(baseline_run_id), find_run(candidate_run_id))
+
+    @app.get("/api/v1/runs/{run_id}/export.jsonl", tags=["exports"])
+    def export_trace(run_id: str) -> PlainTextResponse:
+        run = find_run(run_id)
+        body = "\n".join(json.dumps(event.model_dump(mode="json")) for event in run.events)
+        return PlainTextResponse(
+            body + "\n",
+            media_type="application/x-ndjson",
+            headers={"Content-Disposition": f'attachment; filename="{run_id}.jsonl"'},
+        )
+
+    @app.get("/api/v1/runs/{run_id}/evaluation.csv", tags=["exports"])
+    def export_evaluation_csv(run_id: str) -> Response:
+        run = find_run(run_id)
+        output = io.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(["rule", "severity", "event_id", "explanation", "evidence"])
+        for flag in evaluate_run(run):
+            writer.writerow(
+                [
+                    csv_safe(flag.rule),
+                    flag.severity,
+                    csv_safe(flag.event_id),
+                    csv_safe(flag.explanation),
+                    csv_safe(json.dumps(flag.evidence)),
+                ]
+            )
+        return Response(
+            output.getvalue(),
+            media_type="text/csv",
+            headers={"Content-Disposition": f'attachment; filename="{run_id}-evaluation.csv"'},
+        )
+
+    @app.get("/api/v1/runs/{run_id}/audit.md", tags=["exports"])
+    def export_audit_markdown(run_id: str) -> PlainTextResponse:
+        run = find_run(run_id)
+        flags = evaluate_run(run)
+        lines = [
+            f"# AgentOps audit: {run.run_id}",
+            "",
+            f"- Completion observed: {'yes' if run.is_complete else 'no'}",
+            f"- Validated events: {len(run.events)}",
+            f"- Structural findings: {len(run.findings)}",
+            f"- Evaluation flags: {len(flags)}",
+            "",
+            "## Deterministic flags",
+            "",
+        ]
+        lines.extend(f"- **{flag.rule}** (`{flag.event_id}`): {flag.explanation}" for flag in flags)
+        lines.extend(
+            [
+                "",
+                "This local prototype does not guarantee model quality or safety.",
+                "Operational signals require human interpretation.",
+            ]
+        )
+        return PlainTextResponse(
+            "\n".join(lines) + "\n",
+            media_type="text/markdown",
+            headers={"Content-Disposition": f'attachment; filename="{run_id}-audit.md"'},
+        )
+
+    @app.post("/api/v1/demo/reset", tags=["imports"])
+    def reset_demo(request: ResetRequest) -> dict[str, str]:
+        if request.confirmation != "RESET LOCAL DEMO DATA":
+            raise ValueError("confirmation must exactly match RESET LOCAL DEMO DATA")
+        repository.reset()
+        return {"status": "reset", "scope": "local demo data"}
 
     return app
 
