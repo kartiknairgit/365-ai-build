@@ -54,3 +54,42 @@ class TraceRepository:
                     )
                 )
             return batch.id, True
+
+    def list_events(
+        self,
+        *,
+        workflow: str | None = None,
+        status: str | None = None,
+        agent: str | None = None,
+    ) -> list:
+        query = select(EventRecord).order_by(
+            EventRecord.run_id, EventRecord.sequence_number, EventRecord.event_id
+        )
+        with self.database.sessions() as session:
+            records = list(session.scalars(query))
+        events = [record.payload for record in records]
+        if workflow:
+            events = [event for event in events if event["workflow_name"] == workflow]
+        if status:
+            events = [event for event in events if event["status"] == status]
+        if agent:
+            events = [event for event in events if event.get("agent_name") == agent]
+        return events
+
+    def list_quarantine(self, batch_id: int) -> list[dict]:
+        query = (
+            select(QuarantineRecord)
+            .where(QuarantineRecord.import_batch_id == batch_id)
+            .order_by(QuarantineRecord.line_number)
+        )
+        with self.database.sessions() as session:
+            records = list(session.scalars(query))
+        return [
+            {
+                "line_number": item.line_number,
+                "error_path": item.error_path,
+                "reason": item.reason,
+                "raw_excerpt": item.raw_excerpt,
+            }
+            for item in records
+        ]
